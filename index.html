@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mierstan</title>
+<meta name="description" content="mierstan — 中学生开发者。写浏览器、机房工具，和一点音乐生成。">
+<meta name="theme-color" content="#08090c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="mierstan">
+<meta property="og:description" content="中学生开发者。写浏览器、机房工具，和一点音乐生成。">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0d11'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='17' font-weight='700' fill='%235eead4' text-anchor='middle'%3Em%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#08090c;
+    --fg:#eef1f5;
+    --muted:#868f9e;
+    --faint:#5d6573;
+    --line:rgba(255,255,255,.09);
+    --line-strong:rgba(255,255,255,.16);
+    --card:rgba(255,255,255,.035);
+    --card-hover:rgba(255,255,255,.065);
+    --accent:#5eead4;
+    --glow-a:rgba(94,234,212,.22);
+    --glow-b:rgba(122,112,255,.20);
+    --glow-c:rgba(255,168,94,.09);
+    --card-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  @media (prefers-color-scheme: light){
+    :root{
+      --bg:#f5f6f8;
+      --fg:#11141a;
+      --muted:#5a6270;
+      --faint:#868e9c;
+      --line:rgba(0,0,0,.10);
+      --line-strong:rgba(0,0,0,.18);
+      --card:rgba(255,255,255,.72);
+      --card-hover:rgba(255,255,255,.95);
+      --accent:#0f7a6d;
+      --glow-a:rgba(13,148,136,.20);
+      --glow-b:rgba(99,102,241,.16);
+      --glow-c:rgba(255,168,94,.14);
+      --card-shadow:0 1px 2px rgba(16,20,28,.05), 0 8px 24px -12px rgba(16,20,28,.18);
+    }
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    font-size:16px;
+    line-height:1.6;
+    min-height:100svh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:clamp(28px,7vw,88px) clamp(20px,5vw,40px);
+    position:relative;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:-12%;
+    z-index:0;
+    pointer-events:none;
+    background:
+      radial-gradient(34% 30% at 22% 18%, var(--glow-a), transparent 62%),
+      radial-gradient(32% 28% at 80% 76%, var(--glow-b), transparent 62%),
+      radial-gradient(26% 22% at 64% 4%, var(--glow-c), transparent 64%);
+    filter:blur(40px);
+  }
+  body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    opacity:.5;
+    background-image:radial-gradient(var(--line) .5px, transparent .5px);
+    background-size:26px 26px;
+    mask-image:radial-gradient(70% 60% at 50% 40%, #000 20%, transparent 100%);
+    -webkit-mask-image:radial-gradient(70% 60% at 50% 40%, #000 20%, transparent 100%);
+  }
+
+  .wrap{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:640px;
+  }
+
+  .kicker{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--faint);
+    margin-bottom:18px;
+  }
+  .kicker i{
+    width:6px;height:6px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    flex:none;
+  }
+
+  h1{
+    margin:0;
+    font-size:clamp(2.9rem,10vw,4.4rem);
+    line-height:.98;
+    letter-spacing:-.045em;
+    font-weight:700;
+  }
+  h1 .thin{
+    font-weight:300;
+    color:var(--muted);
+  }
+
+  .lead{
+    margin:18px 0 0;
+    font-size:clamp(15px,2.1vw,17px);
+    color:var(--muted);
+    max-width:34em;
+  }
+  .lead b{color:var(--fg);font-weight:500}
+
+  .rule{
+    height:1px;
+    background:linear-gradient(90deg, var(--line-strong), transparent);
+    margin:clamp(26px,4vw,38px) 0 clamp(18px,3vw,24px);
+  }
+
+  .section-label{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--faint);
+    margin-bottom:10px;
+  }
+
+  .projects{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+  .project{
+    display:block;
+    text-decoration:none;
+    color:inherit;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:13px 16px;
+    box-shadow:var(--card-shadow);
+    backdrop-filter:blur(16px) saturate(150%);
+    -webkit-backdrop-filter:blur(16px) saturate(150%);
+    transition:background .22s ease, border-color .22s ease, transform .22s ease;
+  }
+  .project:hover,
+  .project:focus-visible{
+    background:var(--card-hover);
+    border-color:var(--line-strong);
+    transform:translateX(2px);
+    outline:none;
+  }
+  .project:focus-visible{border-color:var(--accent)}
+  .project-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .project-name{
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:-.01em;
+  }
+  .project-desc{
+    display:block;
+    font-size:13.5px;
+    color:var(--muted);
+    margin-top:2px;
+  }
+  .lang{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:11px;
+    color:var(--faint);
+    white-space:nowrap;
+    flex:none;
+  }
+
+  .links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:clamp(20px,3.4vw,26px);
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:8px 15px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--card);
+    box-shadow:var(--card-shadow);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    color:var(--fg);
+    text-decoration:none;
+    font-size:13.5px;
+    transition:background .2s ease, border-color .2s ease, color .2s ease;
+  }
+  .pill:hover,
+  .pill:focus-visible{
+    background:var(--card-hover);
+    border-color:var(--line-strong);
+    outline:none;
+  }
+  .pill svg{width:14px;height:14px;opacity:.75;flex:none}
+
+  footer{
+    margin-top:clamp(26px,4vw,34px);
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:11.5px;
+    color:var(--faint);
+    letter-spacing:.03em;
+  }
+
+  @media (max-width:430px){
+    .project-head{flex-direction:column;gap:2px}
+    .lang{order:-1}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <div class="kicker"><i></i>github.com/mierstan</div>
+
+  <h1>mierstan<span class="thin">.</span></h1>
+
+  <p class="lead">中学生开发者。写<b>浏览器</b>、<b>机房工具</b>，还有一点<b>音乐生成</b>。</p>
+
+  <div class="rule"></div>
+
+  <div class="section-label">Selected work</div>
+  <ul class="projects">
+    <li>
+      <a class="project" href="https://github.com/mierstan/prism">
+        <span class="project-head">
+          <span class="project-name">Prism</span>
+          <span class="lang">TypeScript</span>
+        </span>
+        <span class="project-desc">一个从零写的浏览器</span>
+      </a>
+    </li>
+    <li>
+      <a class="project" href="https://github.com/mierstan/JFstgrab">
+        <span class="project-head">
+          <span class="project-name">JFstgrab</span>
+          <span class="lang">C#</span>
+        </span>
+        <span class="project-desc">给学校机房用的学生机管理工具</span>
+      </a>
+    </li>
+    <li>
+      <a class="project" href="https://github.com/mierstan/EENDM">
+        <span class="project-head">
+          <span class="project-name">EENDM</span>
+          <span class="lang">Python</span>
+        </span>
+        <span class="project-desc">音乐生成模型实验</span>
+      </a>
+    </li>
+  </ul>
+
+  <nav class="links" aria-label="联系方式">
+    <a class="pill" href="https://github.com/mierstan">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub
+    </a>
+    <!-- 待补：邮箱 / B站 / 作品集等入口，替换 href 与文案即可 -->
+  </nav>
+
+  <footer>
+    <span>mierstan.github.io</span>
+    <span>2026</span>
+  </footer>
+
+</main>
+</body>
+</html>
